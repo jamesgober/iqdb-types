@@ -16,6 +16,11 @@
 /// assert_eq!(metric, DistanceMetric::Cosine);
 /// assert_ne!(metric, DistanceMetric::Euclidean);
 /// ```
+///
+/// The enum is `#[non_exhaustive]`: future releases may add metrics (for
+/// example, Jaccard or Chebyshev) without it being a breaking change, so a
+/// `match` on it from another crate must include a wildcard arm.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum DistanceMetric {

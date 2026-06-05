@@ -1,11 +1,8 @@
-<h1 align="center">
-    <img width="90px" height="auto" src="https://raw.githubusercontent.com/jamesgober/jamesgober/main/media/icons/hexagon-3.svg" alt="Triple Hexagon">
-    <br><b>CHANGELOG</b>
-</h1>
-<p>
-  All notable changes to <code>iqdb-types</code> will be documented in this file. The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>,
-  and this project adheres to <a href="https://semver.org/spec/v2.0.0.html/">Semantic Versioning</a>.
-</p>
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
@@ -13,11 +10,59 @@
 
 ### Added
 
+- Consumer-simulation integration suite (`tests/consumer_simulation.rs`) toward
+  the v0.4.0 feature-freeze gate: minimal working analogues of `iqdb-distance`,
+  an index crate, and `iqdb-filter` — built only from the public surface and at
+  the **exact signatures the real crates expose** (`compute(metric, &[f32],
+  &[f32])`; an `Arc<[f32]>`-storing index with `search(&[f32], &SearchParams)`
+  and `delete(&VectorId)`; closed-world `Filter` evaluation). Confirms the
+  vocabulary is sufficient and ergonomic for the family before the freeze.
+
 ### Changed
 
 ### Fixed
 
 ### Security
+
+---
+
+## [0.3.0] - 2026-06-05
+
+Hardening and documentation release. No new public types — the v0.2.0 surface is now proven against generated inputs, fully documented and exampled, performance-tuned, and made forward-compatible where it matters.
+
+### Added
+
+- Property-based test suite (`tests/properties.rs`, `proptest` dev-dependency)
+  covering the core type contracts per `dev/DIRECTIVES.md` §5/§8: `Vector`
+  validation and round-trip, `VectorRef` viewing, `VectorId` `Display` (decimal
+  / lowercase-hex) and construction, `Metadata` key ordering and lookup,
+  `DistanceMetric` `Eq`/`Hash` consistency, and a `serde` JSON round-trip for
+  every public type.
+- `examples/` directory with runnable, documented examples: `vectors`,
+  `metadata_and_filters`, `search`, `errors`, and `serde_roundtrip` (the last
+  gated behind `required-features = ["serde"]`).
+- `docs/API.md` rewritten as a complete reference: every public item with its
+  description, parameters, trait/derive list, and multiple worked examples,
+  plus a trait-implementation matrix.
+- `benches/vector_new.rs` (`criterion` dev-dependency): a Criterion benchmark
+  for the one measurable hot path, `Vector::new` validation, across common
+  embedding dimensionalities (32 / 128 / 768 / 1024).
+
+### Changed
+
+- `Vector` now stores its components in a `Box<[f32]>` instead of a `Vec<f32>`.
+  The value is immutable after construction, so it never needs spare capacity:
+  the wrapper is one machine word smaller and the backing allocation is sized
+  exactly to the data. The public API is unchanged — `Vector::new` still takes
+  a `Vec<f32>` and `into_inner` still returns one (via an allocation-free
+  `Box<[f32]>::into_vec`).
+- Added `#[inline]` to the trivial accessors and constructors across the public
+  surface so they inline across crate boundaries even when a consumer does not
+  enable fat LTO.
+- `DistanceMetric` is now `#[non_exhaustive]`, so future metrics can be added
+  without a breaking change. Consumers matching on it must include a wildcard
+  arm. (`IqdbError` is already `#[non_exhaustive]`; `Value` and `Filter` remain
+  exhaustive so they can be matched fully.)
 
 ---
 
@@ -74,6 +119,7 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 
-[Unreleased]: https://github.com/jamesgober/iqdb-types/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/jamesgober/iqdb-types/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/jamesgober/iqdb-types/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/jamesgober/iqdb-types/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/jamesgober/iqdb-types/releases/tag/v0.1.0

@@ -19,6 +19,14 @@ use crate::error::{IqdbError, Result};
 /// checks: once a `Vector` exists, the math never has to defend against
 /// empty, NaN, or infinite components.
 ///
+/// # Representation
+///
+/// Components are stored in a `Box<[f32]>`, not a `Vec<f32>`: a `Vector` is
+/// immutable after construction, so it never needs spare capacity. This makes
+/// the value one machine word smaller than a `Vec`-backed wrapper and
+/// guarantees the backing allocation is sized exactly to the data — meaningful
+/// when millions of vectors are held resident.
+///
 /// # Examples
 ///
 /// ```
@@ -37,7 +45,7 @@ use crate::error::{IqdbError, Result};
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Vector(Vec<f32>);
+pub struct Vector(Box<[f32]>);
 
 impl Vector {
     /// Builds a `Vector` from `data`, validating the contents.
@@ -50,6 +58,9 @@ impl Vector {
     /// Validating at the type boundary keeps the rest of the spine — and
     /// every consumer crate — free of input checks. Once a `Vector` is in
     /// hand the math can trust its contents.
+    ///
+    /// The `data` buffer is shrunk to fit (`into_boxed_slice`) on success, so
+    /// the stored allocation carries no spare capacity.
     ///
     /// # Examples
     ///
@@ -68,6 +79,7 @@ impl Vector {
     ///     IqdbError::InvalidVector,
     /// );
     /// ```
+    #[inline]
     pub fn new(data: Vec<f32>) -> Result<Self> {
         if data.is_empty() {
             return Err(IqdbError::InvalidVector);
@@ -75,7 +87,7 @@ impl Vector {
         if data.iter().any(|v| !v.is_finite()) {
             return Err(IqdbError::InvalidVector);
         }
-        Ok(Self(data))
+        Ok(Self(data.into_boxed_slice()))
     }
 
     /// Builds a `Vector` from `data` without validating it.
@@ -100,9 +112,10 @@ impl Vector {
     /// # }
     /// ```
     #[cfg(any(test, feature = "testing"))]
+    #[inline]
     #[must_use]
     pub fn new_unchecked(data: Vec<f32>) -> Self {
-        Self(data)
+        Self(data.into_boxed_slice())
     }
 
     /// Borrows the components as a slice.
@@ -115,6 +128,7 @@ impl Vector {
     /// let v = Vector::new(vec![0.5, 0.5]).unwrap();
     /// assert_eq!(v.as_slice(), &[0.5, 0.5]);
     /// ```
+    #[inline]
     #[must_use]
     pub fn as_slice(&self) -> &[f32] {
         &self.0
@@ -129,6 +143,7 @@ impl Vector {
     ///
     /// assert_eq!(Vector::new(vec![1.0, 2.0]).unwrap().len(), 2);
     /// ```
+    #[inline]
     #[must_use]
     pub fn len(&self) -> usize {
         self.0.len()
@@ -147,6 +162,7 @@ impl Vector {
     ///
     /// assert!(!Vector::new(vec![1.0]).unwrap().is_empty());
     /// ```
+    #[inline]
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
@@ -161,12 +177,16 @@ impl Vector {
     ///
     /// assert_eq!(Vector::new(vec![1.0, 2.0, 3.0]).unwrap().dim(), 3);
     /// ```
+    #[inline]
     #[must_use]
     pub fn dim(&self) -> usize {
         self.0.len()
     }
 
-    /// Consumes the vector and returns the underlying buffer.
+    /// Consumes the vector and returns the underlying buffer as a `Vec<f32>`.
+    ///
+    /// This is allocation-free: the boxed slice is converted back to a `Vec`
+    /// with capacity equal to its length (`Box<[f32]>::into_vec`), no copy.
     ///
     /// # Examples
     ///
@@ -176,9 +196,10 @@ impl Vector {
     /// let v = Vector::new(vec![1.0, 2.0]).unwrap();
     /// assert_eq!(v.into_inner(), vec![1.0, 2.0]);
     /// ```
+    #[inline]
     #[must_use]
     pub fn into_inner(self) -> Vec<f32> {
-        self.0
+        self.0.into_vec()
     }
 }
 
@@ -196,6 +217,7 @@ impl TryFrom<Vec<f32>> for Vector {
     /// let v: Vector = vec![1.0, 0.0].try_into().unwrap();
     /// assert_eq!(v.dim(), 2);
     /// ```
+    #[inline]
     fn try_from(data: Vec<f32>) -> Result<Self> {
         Self::new(data)
     }
@@ -233,6 +255,7 @@ impl<'a> VectorRef<'a> {
     /// let data = [0.5, 0.5];
     /// assert_eq!(VectorRef::from(&data[..]).as_slice(), &[0.5, 0.5]);
     /// ```
+    #[inline]
     #[must_use]
     pub fn as_slice(&self) -> &[f32] {
         self.0
@@ -248,6 +271,7 @@ impl<'a> VectorRef<'a> {
     /// let data = [1.0, 2.0];
     /// assert_eq!(VectorRef::from(&data[..]).len(), 2);
     /// ```
+    #[inline]
     #[must_use]
     pub fn len(&self) -> usize {
         self.0.len()
@@ -263,6 +287,7 @@ impl<'a> VectorRef<'a> {
     /// let empty: [f32; 0] = [];
     /// assert!(VectorRef::from(&empty[..]).is_empty());
     /// ```
+    #[inline]
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
@@ -278,6 +303,7 @@ impl<'a> VectorRef<'a> {
     /// let data = [1.0, 2.0, 3.0];
     /// assert_eq!(VectorRef::from(&data[..]).dim(), 3);
     /// ```
+    #[inline]
     #[must_use]
     pub fn dim(&self) -> usize {
         self.0.len()
@@ -295,6 +321,7 @@ impl<'a> VectorRef<'a> {
     /// let slice: &[f32] = v.into_inner();
     /// assert_eq!(slice, &[1.0, 2.0]);
     /// ```
+    #[inline]
     #[must_use]
     pub fn into_inner(self) -> &'a [f32] {
         self.0
@@ -302,6 +329,7 @@ impl<'a> VectorRef<'a> {
 }
 
 impl<'a> From<&'a [f32]> for VectorRef<'a> {
+    #[inline]
     fn from(data: &'a [f32]) -> Self {
         Self(data)
     }

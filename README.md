@@ -18,7 +18,7 @@
 
 <div align="left">
     <p>
-        <strong>iqdb-types</strong> defines the vocabulary the entire iQDB vector-database family speaks. When you read the docs for <code>iqdb-hnsw</code> or <code>iqdb-flat</code>, every type you meet &mdash; <code>Vector</code>, <code>VectorId</code>, <code>Distance</code>, <code>Hit</code>, <code>Metadata</code>, <code>SearchParams</code> &mdash; is defined here.
+        <strong>iqdb-types</strong> defines the vocabulary the entire iQDB vector-database family speaks. When you read the docs for <code>iqdb-hnsw</code> or <code>iqdb-flat</code>, every type you meet &mdash; <code>Vector</code>, <code>VectorId</code>, <code>DistanceMetric</code>, <code>Filter</code>, <code>Hit</code>, <code>Metadata</code>, <code>SearchParams</code> &mdash; is defined here.
     </p>
     <p>
         It is deliberately the smallest, most stable crate in the family: almost pure type declarations, no iQDB-internal dependencies, and an optional <code>serde</code> feature. Because a breaking change here cascades through every other iQDB crate, the API is considered carefully before it freezes at 1.0 &mdash; that caution is the crate's whole job.
@@ -38,12 +38,14 @@
 
 <h2>What it does</h2>
 
-- **`Vector` / `VectorRef`** &mdash; owned and borrowed N-dimensional float vectors
+- **`Vector` / `VectorRef`** &mdash; owned (validated, `Box<[f32]>`-backed) and borrowed N-dimensional float vectors
 - **`VectorId`** &mdash; stable identifier: 64-bit integer or user-supplied bytes
-- **`Distance`** &mdash; distance/similarity metric tag (cosine, L2, dot, ...)
+- **`DistanceMetric`** &mdash; metric tag: `Cosine`, `DotProduct`, `Euclidean`, `Manhattan`, `Hamming`
+- **`Metadata` / `Value`** &mdash; immutable, ordered scalar key/value payload
+- **`Filter`** &mdash; boolean expression tree over metadata (closed-world semantics)
+- **`SearchParams`** &mdash; query parameters: k, metric, filter, search-time breadth
 - **`Hit`** &mdash; a search result: id, distance, and optional metadata
-- **`Metadata`** &mdash; structured key/value payload attached to a vector
-- **`SearchParams`** &mdash; query parameters: k, metric, filters, search-time knobs
+- **`IqdbError`** &mdash; the domain error (`error-forge` `ForgeError`)
 - **`serde` support** &mdash; every public type (de)serializes under the `serde` feature
 
 
@@ -53,14 +55,14 @@
 
 ```toml
 [dependencies]
-iqdb-types = "0.2"
+iqdb-types = "0.3"
 ```
 
 <br>
 
 ## Status
 
-<code>v0.2.0</code> — the core type surface has landed: `Vector`/`VectorRef`, `VectorId`, `Metadata`/`Value`, `DistanceMetric`, `Filter`, `SearchParams`, `Hit`, and `IqdbError`, with optional `serde`. The API is still being refined across the 0.x series and frozen at `1.0.0`; see the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a> and <a href="./docs/API.md"><code>docs/API.md</code></a>.
+<code>v0.3.0</code> — the core type surface (landed in v0.2.0) is now hardened: property-tested across every invariant, fully documented with runnable examples and a complete <a href="./docs/API.md"><code>API reference</code></a>, performance-tuned (`Box<[f32]>`-backed `Vector`, inlined accessors, a benchmarked hot path), and `DistanceMetric` made `#[non_exhaustive]` for forward compatibility. The API is being finalized across the remaining 0.x series and frozen at `1.0.0`; see the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>.
 
 <hr>
 <br>
@@ -69,7 +71,7 @@ iqdb-types = "0.2"
 
 `iqdb-types` is the root of the iQDB dependency graph. Everything builds on it:
 
-- `iqdb-distance` &mdash; operates on these `Vector` and `Distance` types
+- `iqdb-distance` &mdash; operates on these `Vector` and `DistanceMetric` types
 - `iqdb-flat` / `iqdb-hnsw` / `iqdb-ivf` &mdash; index crates returning `Hit`s for `SearchParams`
 - `iqdb` &mdash; the database, composing the family on this shared vocabulary
 

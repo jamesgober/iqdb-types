@@ -54,6 +54,7 @@ impl SearchParams {
     /// assert_eq!(params.ef, None);
     /// assert!(params.filter.is_none());
     /// ```
+    #[inline]
     #[must_use]
     pub fn new(k: usize, metric: DistanceMetric) -> Self {
         Self {

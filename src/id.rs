@@ -40,6 +40,7 @@ pub enum VectorId {
 }
 
 impl From<u64> for VectorId {
+    #[inline]
     fn from(value: u64) -> Self {
         Self::U64(value)
     }
@@ -51,6 +52,7 @@ impl TryFrom<Vec<u8>> for VectorId {
     /// Builds a [`Bytes`](VectorId::Bytes) id, rejecting an empty key with
     /// [`IqdbError::InvalidConfig`] (a malformed identifier is a
     /// configuration shape problem, not a malformed vector).
+    #[inline]
     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
         if bytes.is_empty() {
             return Err(IqdbError::InvalidConfig {

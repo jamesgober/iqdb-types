@@ -44,6 +44,7 @@ impl Hit {
     /// assert_eq!(hit.distance, 2.5);
     /// assert!(hit.metadata.is_none());
     /// ```
+    #[inline]
     #[must_use]
     pub fn new(id: VectorId, distance: f32) -> Self {
         Self {

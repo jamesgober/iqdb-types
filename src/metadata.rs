@@ -84,6 +84,7 @@ impl Metadata {
     /// assert_eq!(meta.get("year"), Some(&Value::Int(2026)));
     /// assert_eq!(meta.get("nope"), None);
     /// ```
+    #[inline]
     #[must_use]
     pub fn get(&self, key: &str) -> Option<&Value> {
         self.0.get(key)
@@ -100,6 +101,7 @@ impl Metadata {
     ///     [("a".to_string(), Value::Null)].into_iter().collect();
     /// assert_eq!(meta.len(), 1);
     /// ```
+    #[inline]
     #[must_use]
     pub fn len(&self) -> usize {
         self.0.len()
@@ -114,6 +116,7 @@ impl Metadata {
     ///
     /// assert!(Metadata::default().is_empty());
     /// ```
+    #[inline]
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
@@ -137,18 +140,21 @@ impl Metadata {
     /// let keys: Vec<&String> = meta.iter().map(|(key, _)| key).collect();
     /// assert_eq!(keys, vec!["a", "b"]);
     /// ```
+    #[inline]
     pub fn iter(&self) -> btree_map::Iter<'_, String, Value> {
         self.0.iter()
     }
 }
 
 impl From<BTreeMap<String, Value>> for Metadata {
+    #[inline]
     fn from(map: BTreeMap<String, Value>) -> Self {
         Self(map)
     }
 }
 
 impl FromIterator<(String, Value)> for Metadata {
+    #[inline]
     fn from_iter<I: IntoIterator<Item = (String, Value)>>(iter: I) -> Self {
         Self(iter.into_iter().collect())
     }

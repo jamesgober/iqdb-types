@@ -104,6 +104,7 @@ impl fmt::Display for IqdbError {
 impl std::error::Error for IqdbError {}
 
 impl ForgeError for IqdbError {
+    #[inline]
     fn kind(&self) -> &'static str {
         match self {
             Self::DimensionMismatch { .. } => "DimensionMismatch",
@@ -117,6 +118,7 @@ impl ForgeError for IqdbError {
         }
     }
 
+    #[inline]
     fn caption(&self) -> &'static str {
         match self {
             Self::DimensionMismatch { .. } => "vector dimension does not match the index",

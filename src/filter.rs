@@ -131,6 +131,7 @@ impl Filter {
     /// let f = Filter::eq("year", Value::Int(2026));
     /// assert_eq!(f, Filter::Eq { field: "year".to_string(), value: Value::Int(2026) });
     /// ```
+    #[inline]
     #[must_use]
     pub fn eq(field: impl Into<String>, value: Value) -> Self {
         Self::Eq {
@@ -149,6 +150,7 @@ impl Filter {
     /// let f = Filter::neq("status", Value::String("draft".to_string()));
     /// assert!(matches!(f, Filter::Neq { .. }));
     /// ```
+    #[inline]
     #[must_use]
     pub fn neq(field: impl Into<String>, value: Value) -> Self {
         Self::Neq {
@@ -167,6 +169,7 @@ impl Filter {
     /// let f = Filter::lt("year", Value::Int(2000));
     /// assert!(matches!(f, Filter::Lt { .. }));
     /// ```
+    #[inline]
     #[must_use]
     pub fn lt(field: impl Into<String>, value: Value) -> Self {
         Self::Lt {
@@ -185,6 +188,7 @@ impl Filter {
     /// let f = Filter::lte("year", Value::Int(2000));
     /// assert!(matches!(f, Filter::Lte { .. }));
     /// ```
+    #[inline]
     #[must_use]
     pub fn lte(field: impl Into<String>, value: Value) -> Self {
         Self::Lte {
@@ -203,6 +207,7 @@ impl Filter {
     /// let f = Filter::gt("year", Value::Int(2000));
     /// assert!(matches!(f, Filter::Gt { .. }));
     /// ```
+    #[inline]
     #[must_use]
     pub fn gt(field: impl Into<String>, value: Value) -> Self {
         Self::Gt {
@@ -221,6 +226,7 @@ impl Filter {
     /// let f = Filter::gte("year", Value::Int(2000));
     /// assert!(matches!(f, Filter::Gte { .. }));
     /// ```
+    #[inline]
     #[must_use]
     pub fn gte(field: impl Into<String>, value: Value) -> Self {
         Self::Gte {
@@ -239,6 +245,7 @@ impl Filter {
     /// let f = Filter::is_in("year", vec![Value::Int(2025), Value::Int(2026)]);
     /// assert!(matches!(f, Filter::In { .. }));
     /// ```
+    #[inline]
     #[must_use]
     pub fn is_in(field: impl Into<String>, values: Vec<Value>) -> Self {
         Self::In {
@@ -265,6 +272,7 @@ impl Filter {
     /// ]);
     /// assert!(matches!(f, Filter::And(_)));
     /// ```
+    #[inline]
     #[must_use]
     pub fn and(filters: Vec<Filter>) -> Self {
         Self::And(filters)
@@ -288,6 +296,7 @@ impl Filter {
     /// ]);
     /// assert!(matches!(f, Filter::Or(_)));
     /// ```
+    #[inline]
     #[must_use]
     pub fn or(filters: Vec<Filter>) -> Self {
         Self::Or(filters)
@@ -307,6 +316,7 @@ impl Filter {
     // than implementing `std::ops::Not`, which negates `self` and reads wrong
     // for wrapping a sub-filter.
     #[allow(clippy::should_implement_trait)]
+    #[inline]
     #[must_use]
     pub fn not(inner: Filter) -> Self {
         Self::Not(Box::new(inner))

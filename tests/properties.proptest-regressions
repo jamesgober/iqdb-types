@@ -1,0 +1,11 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc e1642a7913c2584920d60ae06b4f086acbe7c55b194856c01dd740bbb0f6a08c # shrinks to v = Float(9.256953926032515e29)
+cc 2393b4d3ab8f1dee651f32dfcc57a2c8f7300102961a2eb548b7fec63f8f7953 # shrinks to f = Or([Or([In { field: "a", values: [Float(2.2567355967488206e29)] }])])
+cc 98a18c1cea51d3de9fa6b150c7de4d29f74448708c958b8a423f3a9d178b2d58 # shrinks to m = Metadata({"a": Float(3.7156661730130996e29)})
+cc d7509fbc16805391ceb3d2681ce9e0e73517597b337e6361b57c1a47c8810b61 # shrinks to h = Hit { id: U64(0), distance: 0.0, metadata: Some(Metadata({"a": Float(-9.345122680520243e29)})) }
+cc 19ee25910e9d063fee6480f65fb230dae622f91fcbbb7e282803c3a0bf260c1e # shrinks to p = SearchParams { k: 0, ef: None, metric: Cosine, filter: Some(And([In { field: "a", values: [Float(6.2529681254518636e29)] }])) }

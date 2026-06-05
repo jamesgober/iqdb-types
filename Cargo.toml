@@ -9,7 +9,7 @@
 #╚═══════════════════════════════╝
 [package]
 name    = "iqdb-types"
-version = "0.2.0"
+version = "0.3.0"
 
 # Minimum Supported Rust Version (MSRV)
 rust-version = "1.87"
@@ -87,8 +87,31 @@ serde = { version = "1", features = ["derive"], optional = true }
 # Needed in the integration-test crate to name the `ForgeError` trait when
 # asserting `IqdbError::kind` (integration tests cannot see normal deps).
 error-forge = "1.0.0"
-# serde round-trip coverage in tests (run under --all-features).
+# serde round-trip coverage in tests + the serde example (run under
+# --all-features).
 serde_json = "1"
+# Property-based coverage of the type contracts (validation, ordering,
+# Display, serde round-trips) per dev/DIRECTIVES.md §5 and §8.
+proptest = "1"
+# Benchmark harness for the one measurable hot path (Vector::new validation).
+criterion = { version = "0.5", features = ["html_reports"] }
+
+
+# BENCHMARKS
+# #################################
+[[bench]]
+name    = "vector_new"
+harness = false
+
+
+# EXAMPLES
+# #################################
+# The serde example exercises the gated `Serialize`/`Deserialize` impls, so it
+# only builds when the `serde` feature is on. Run it with:
+#   cargo run --example serde_roundtrip --features serde
+[[example]]
+name              = "serde_roundtrip"
+required-features = ["serde"]
 
 
 # RELEASE PROFILE
