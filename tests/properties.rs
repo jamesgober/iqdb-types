@@ -132,7 +132,11 @@ proptest! {
         prop_assert!(keys.windows(2).all(|w| w[0] < w[1]), "keys must be strictly ascending");
 
         for (k, v) in &map {
-            prop_assert_eq!(meta.get(k), Some(&Value::Int(*v)));
+            // Bind the expected value to a local: `prop_assert_eq!` moves its
+            // operands into bindings, so `Some(&Value::Int(*v))` as a temporary
+            // would be dropped while borrowed (E0716) on the 1.87 MSRV.
+            let expected = Value::Int(*v);
+            prop_assert_eq!(meta.get(k), Some(&expected));
         }
         // "123" cannot match the [a-z] key alphabet, so it is always absent.
         prop_assert_eq!(meta.get("123"), None);
