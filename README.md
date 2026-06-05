@@ -11,7 +11,7 @@
     <a href="https://crates.io/crates/iqdb-types"><img alt="Downloads" src="https://img.shields.io/crates/d/iqdb-types?color=%230099ff"></a>
     <a href="https://docs.rs/iqdb-types"><img alt="docs.rs" src="https://img.shields.io/docsrs/iqdb-types"></a>
     <a href="https://github.com/jamesgober/iqdb-types/actions"><img alt="CI" src="https://github.com/jamesgober/iqdb-types/actions/workflows/ci.yml/badge.svg"></a>
-    <a href="https://github.com/rust-lang/rfcs/blob/master/text/2495-min-rust-version.md"><img alt="MSRV" src="https://img.shields.io/badge/MSRV-1.85%2B-blue"></a>
+    <a href="https://github.com/rust-lang/rfcs/blob/master/text/2495-min-rust-version.md"><img alt="MSRV" src="https://img.shields.io/badge/MSRV-1.87%2B-blue"></a>
 </div>
 
 <br>
@@ -26,7 +26,7 @@
     <br>
     <hr>
     <p>
-        <strong>MSRV is 1.85+</strong> (Rust 2024 edition). Pure types. Zero iQDB-internal deps. The most stable crate in the family.
+        <strong>MSRV is 1.87+</strong> (Rust 2024 edition). Pure types. Zero iQDB-internal deps. The most stable crate in the family.
     </p>
     <blockquote>
         <strong>Status: pre-1.0, in active development.</strong> The public API is being designed across the 0.x series and frozen at <code>1.0.0</code>. See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
@@ -53,14 +53,14 @@
 
 ```toml
 [dependencies]
-iqdb-types = "0.1"
+iqdb-types = "0.2"
 ```
 
 <br>
 
 ## Status
 
-This is the <code>v0.1.0</code> scaffold: structure, tooling, and quality gates are in place; the implementation lands across the 0.x series per the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a> and <a href="./docs/API.md"><code>docs/API.md</code></a>.
+<code>v0.2.0</code> — the core type surface has landed: `Vector`/`VectorRef`, `VectorId`, `Metadata`/`Value`, `DistanceMetric`, `Filter`, `SearchParams`, `Hit`, and `IqdbError`, with optional `serde`. The API is still being refined across the 0.x series and frozen at `1.0.0`; see the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a> and <a href="./docs/API.md"><code>docs/API.md</code></a>.
 
 <hr>
 <br>

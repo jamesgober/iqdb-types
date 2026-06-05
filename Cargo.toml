@@ -9,10 +9,10 @@
 #╚═══════════════════════════════╝
 [package]
 name    = "iqdb-types"
-version = "0.1.0"
+version = "0.2.0"
 
 # Minimum Supported Rust Version (MSRV)
-rust-version = "1.85"
+rust-version = "1.87"
 edition = "2024"
 
 # License
@@ -46,7 +46,8 @@ documentation = "https://docs.rs/iqdb-types"
 
 # Authors
 authors = [
-    "James Gober <me@jamesgober.com>"
+    "James Gober <me@jamesgober.com>",
+    "Matt Callahan <matthewcallahan01@icloud.com>"
 ]
 
 [package.metadata.docs.rs]
@@ -61,26 +62,33 @@ path = "src/lib.rs"
 # FEATURE FLAGS
 # #################################
 [features]
-default = ["std"]
-# Standard library.
-std = []
-# Serialization for all public types.
+# Default build: the pure type surface, std-only, no optional dependencies.
+default = []
+# Derive `serde::Serialize`/`Deserialize` on the public types.
 serde = ["dep:serde"]
+# Exposes `Vector::new_unchecked`, the test-only escape hatch for constructing
+# a `Vector` without the empty/non-finite validation `Vector::new` enforces.
+# A production build without this feature cannot build invalid vectors.
+testing = []
 
 
 # DEPENDENCIES
 # #################################
 [dependencies]
-serde = { version = "1", optional = true, default-features = false, features = ["derive", "alloc"] }
+# Domain error metadata (kind/caption) — the portfolio error standard.
+error-forge = "1.0.0"
+# Optional, additive serialization support behind the `serde` feature.
+serde = { version = "1", features = ["derive"], optional = true }
 
 
 # DEV DEPENDENCIES
 # #################################
 [dev-dependencies]
-proptest = "1"
-
-[target.'cfg(loom)'.dev-dependencies]
-loom = "0.7"
+# Needed in the integration-test crate to name the `ForgeError` trait when
+# asserting `IqdbError::kind` (integration tests cannot see normal deps).
+error-forge = "1.0.0"
+# serde round-trip coverage in tests (run under --all-features).
+serde_json = "1"
 
 
 # RELEASE PROFILE

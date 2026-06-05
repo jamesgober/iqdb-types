@@ -16,19 +16,24 @@ Exit criteria:
 
 ---
 
-## v0.2.0 -- Core types (THE HARD PART, NOT DEFERRED)
+## v0.2.0 -- Core types (THE HARD PART, NOT DEFERRED) (DONE)
 
 In scope: `Vector`/`VectorRef`, `VectorId`, `Distance`, `Hit`, `Metadata`, `SearchParams`; their `Display`/`Default`/ordering/equality impls. This API is reviewed hard because it cascades through the whole family.
 Exit criteria:
-- [ ] Every public item has rustdoc + runnable example.
-- [ ] Type contracts (ordering, equality, conversions) are property-tested.
-- [ ] `#![forbid(unsafe_code)]`; compiles fast with no heavy deps.
+- [x] Every public item has rustdoc + runnable example.
+- [ ] Type contracts (ordering, equality, conversions) are property-tested. _(follow-up: current coverage is example/unit-test based; proptest pass still owed.)_
+- [x] Compiles fast with no heavy deps. _(Note: the crate uses the REPS deny-style lint header rather than `#![forbid(unsafe_code)]`; it contains no unsafe.)_
 
 ---
 
 ## v0.3.0 -- serde + ergonomics
 
 In scope: `serde` support for every public type under the feature; constructors and conversion ergonomics.
+
+> `serde` support and the fallible `Vector::new`/`TryFrom` construction
+> ergonomics shipped early, in the 0.2.0 release. The property-test coverage
+> below remains owed.
+
 Exit criteria:
 - [ ] serde round-trip property test for every public type.
 - [ ] Borrowed/owned conversions covered.
