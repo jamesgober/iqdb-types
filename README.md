@@ -29,7 +29,7 @@
         <strong>MSRV is 1.87+</strong> (Rust 2024 edition). Pure types. Zero iQDB-internal deps. The most stable crate in the family.
     </p>
     <blockquote>
-        <strong>Status: pre-1.0, in active development.</strong> The public API is being designed across the 0.x series and frozen at <code>1.0.0</code>. See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
+        <strong>Status: stable (1.0).</strong> The public API is committed under SemVer for the 1.x series — no breaking changes until 2.0. See <a href="./CHANGELOG.md"><code>CHANGELOG.md</code></a>.
     </blockquote>
 </div>
 
@@ -55,14 +55,14 @@
 
 ```toml
 [dependencies]
-iqdb-types = "0.5"
+iqdb-types = "1.0"
 ```
 
 <br>
 
 ## Status
 
-<code>v0.5.0</code> — **API frozen for 1.x.** The public surface is locked (recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>); only additive, non-breaking changes are allowed before 2.0. The surface is property-tested across every invariant, fully documented with runnable examples and a complete <a href="./docs/API.md"><code>API reference</code></a>, performance-tuned (`Box<[f32]>`-backed `Vector`, inlined accessors, a benchmarked hot path), validated by a consumer-simulation suite, and verified on Windows + Linux across stable and the 1.87 MSRV. Remaining before 1.0: alpha/beta/RC polish.
+<code>v1.0.0</code> — **stable.** The public API is committed under SemVer for the 1.x series (no breaking changes until 2.0; the frozen surface is recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>). It is property-tested across every invariant, fully documented with runnable examples and a complete <a href="./docs/API.md"><code>API reference</code></a>, performance-tuned (`Box<[f32]>`-backed `Vector`, inlined accessors, a benchmarked hot path), validated by a consumer-simulation suite mirroring the real downstream crates, and verified on Windows + Linux across stable and the 1.87 MSRV.
 
 <hr>
 <br>

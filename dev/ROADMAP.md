@@ -1,8 +1,11 @@
 # iqdb-types -- Roadmap
 
-> Path from scaffold to a stable 1.0. Each phase has hard exit criteria; the hard parts are front-loaded, not deferred.
+> **Status: 1.0.0 reached (stable).** This file is retained as the record of the
+> path from scaffold to a stable 1.0 — every phase below is DONE. The frozen 1.x
+> public API is recorded under v0.5.0. Each phase had hard exit criteria; the
+> hard parts were front-loaded, not deferred.
 >
-> **Anti-deferral rule:** no phase pushes a listed hard task to a later phase unless this file is edited to record the move and the reason.
+> **Anti-deferral rule:** no phase pushed a listed hard task to a later phase unless this file records the move and the reason.
 
 ---
 
@@ -21,8 +24,8 @@ Exit criteria:
 In scope: `Vector`/`VectorRef`, `VectorId`, `Distance`, `Hit`, `Metadata`, `SearchParams`; their `Display`/`Default`/ordering/equality impls. This API is reviewed hard because it cascades through the whole family.
 Exit criteria:
 - [x] Every public item has rustdoc + runnable example.
-- [ ] Type contracts (ordering, equality, conversions) are property-tested. _(follow-up: current coverage is example/unit-test based; proptest pass still owed.)_
-- [x] Compiles fast with no heavy deps. _(Note: the crate uses the REPS deny-style lint header rather than `#![forbid(unsafe_code)]`; it contains no unsafe.)_
+- [x] Type contracts (ordering, equality, conversions) are property-tested (delivered in 0.3.0 via `tests/properties.rs`).
+- [x] Compiles fast with no heavy deps. _(The crate uses the REPS deny-style lint header rather than `#![forbid(unsafe_code)]`; it contains no unsafe.)_
 
 ---
 
@@ -79,20 +82,29 @@ Deliberate freeze decisions:
 
 ---
 
-## v0.6.0 -> v0.9.x -- Alpha / Beta -> RC
+## v0.6.0 -> v0.9.x -- Alpha / Beta -> RC (COMPRESSED)
 
-- 0.6.x-0.7.x: integrate against first real consumers; fix what they surface; MINOR-compatible additions only.
-- 0.8.x (beta): bug fixes only; broader testing; final benchmarks captured.
-- 0.9.x (rc): critical fixes + doc polish only.
+> This phase existed to soak the frozen API against the first real downstream
+> consumers and fix what they surfaced. Under the project's deliberate
+> **types-first ordering** (iqdb-types reaches 1.0 before any dependent crate is
+> built), there are no live consumers to soak against yet. Its intent was met
+> instead by `tests/consumer_simulation.rs`, which exercises the public surface
+> at the **exact signatures** the real `iqdb-distance`, index, and `iqdb-filter`
+> crates expose (cross-checked against those Cortex implementations). With the
+> API frozen, every Definition-of-Done criterion met, and cross-platform + MSRV
+> verification green, this phase is compressed and the crate proceeds to 1.0.0.
+> Any friction surfaced when the real consumers are merged will be an additive
+> `1.0.x` change (the realistic gaps are additive; the `#[non_exhaustive]` enums
+> absorb new metrics/errors without a break).
 
 ---
 
-## v1.0.0 -- Stable
+## v1.0.0 -- Stable (DONE)
 
 Exit criteria:
-- [ ] Definition of Done (DIRECTIVES section 7) fully satisfied.
-- [ ] Public API frozen until 2.0.
-- [ ] Release note written; published to crates.io; tag pushed.
+- [x] Definition of Done (DIRECTIVES section 7) fully satisfied.
+- [x] Public API frozen until 2.0 (recorded under v0.5.0 above).
+- [x] Release note written; tag pushed. (Publish to crates.io at the maintainer's discretion.)
 
 ---
 

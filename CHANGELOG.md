@@ -18,6 +18,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.0] - 2026-06-05
+
+First stable release. The public API frozen at 0.5.0 is now committed under SemVer for the 1.x series: no breaking changes until 2.0. Every Definition-of-Done criterion (`dev/DIRECTIVES.md` §7) is satisfied, and the surface is verified on Windows and Linux across the stable and 1.87 MSRV toolchains.
+
+### Added
+
+- Edge-case test suite (`tests/edge_cases.rs`): `Value` NaN/cross-variant
+  inequality, `Metadata` duplicate-key-last-wins and empty default, `Vector`
+  single/large dimensions and finite extremes/subnormals, `VectorRef` empty
+  view, `VectorId` single-byte/max-`u64` rendering, empty `Filter` combinators,
+  `Hit` negative/zero distance, `IqdbError` `Copy`/equality, and `serde`
+  null/empty-metadata and `VectorRef`-serialize behaviour.
+- Empty-`And`/`Or` evaluation test in the consumer simulation, pinning the
+  documented vacuous-truth (`And`) and false (`Or`) semantics.
+- Expanded benchmark suite (`benches/types.rs`): added a `VectorId` `Display`
+  (lowercase-hex) benchmark across UUID/SHA-256/long key sizes, alongside the
+  `Vector::new` benchmark (the bench target was renamed `vector_new` → `types`).
+
+### Changed
+
+- Declared **1.0 stable**: the frozen surface (recorded in `dev/ROADMAP.md`) is
+  now under the SemVer 1.x compatibility guarantee. The **public API is
+  unchanged from 0.5.0** — this release adds only tests, benchmarks, and
+  documentation polish on top of the stability commitment.
+
+---
+
 ## [0.5.0] - 2026-06-05
 
 API freeze. The public API is locked for the 1.x series — the frozen surface is recorded in `dev/ROADMAP.md`. Additive, non-breaking changes remain allowed; anything else waits for 2.0.
@@ -36,6 +63,8 @@ API freeze. The public API is locked for the 1.x series — the frozen surface i
 ---
 
 ## [0.4.0] - 2026-06-05
+
+> **Note:** 0.4.0 was not tagged or published separately — its changes shipped as part of the [0.5.0] release. This section is retained as the record of the feature-freeze milestone.
 
 Feature freeze. The public type set is complete and declared frozen — no new types or methods will be added before 1.0. This release adds the consumer-side proof that the surface is sufficient for the family.
 
@@ -152,9 +181,9 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 
-[Unreleased]: https://github.com/jamesgober/iqdb-types/compare/v0.5.0...HEAD
-[0.5.0]: https://github.com/jamesgober/iqdb-types/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/jamesgober/iqdb-types/compare/v0.3.0...v0.4.0
+[Unreleased]: https://github.com/jamesgober/iqdb-types/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/jamesgober/iqdb-types/compare/v0.5.0...v1.0.0
+[0.5.0]: https://github.com/jamesgober/iqdb-types/compare/v0.3.0...v0.5.0
 [0.3.0]: https://github.com/jamesgober/iqdb-types/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/jamesgober/iqdb-types/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/jamesgober/iqdb-types/releases/tag/v0.1.0

@@ -404,6 +404,19 @@ fn nested_and_or_not_and_range_filters_evaluate() {
     assert!(!eval_filter(&none, Some(&record)));
 }
 
+#[test]
+fn empty_and_is_vacuously_true_empty_or_is_false() {
+    // The documented `Filter` contract: an empty `And` matches everything
+    // (vacuous truth), an empty `Or` matches nothing. A consumer-side evaluator
+    // built from the public surface must be able to honour both.
+    let record = meta(&[("x", Value::Int(1))]);
+    assert!(eval_filter(&Filter::and(vec![]), Some(&record)));
+    assert!(!eval_filter(&Filter::or(vec![]), Some(&record)));
+    // And on a record with no metadata at all.
+    assert!(eval_filter(&Filter::and(vec![]), None));
+    assert!(!eval_filter(&Filter::or(vec![]), None));
+}
+
 #[cfg(feature = "serde")]
 #[test]
 fn snapshot_round_trips_like_a_persistence_layer() {
