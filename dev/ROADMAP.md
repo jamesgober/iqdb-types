@@ -26,34 +26,56 @@ Exit criteria:
 
 ---
 
-## v0.3.0 -- serde + ergonomics
+## v0.3.0 -- serde + ergonomics (DONE)
 
 In scope: `serde` support for every public type under the feature; constructors and conversion ergonomics.
 
 > `serde` support and the fallible `Vector::new`/`TryFrom` construction
-> ergonomics shipped early, in the 0.2.0 release. The property-test coverage
-> below remains owed.
+> ergonomics shipped early, in the 0.2.0 release; the property-test coverage
+> landed in 0.3.0.
 
 Exit criteria:
-- [ ] serde round-trip property test for every public type.
-- [ ] Borrowed/owned conversions covered.
+- [x] serde round-trip property test for every public type (`tests/properties.rs`).
+- [x] Borrowed/owned conversions covered (`Vector` ↔ `Vec<f32>`, `VectorRef` over `&[f32]`).
 
 ---
 
-## v0.4.0 -- Feature freeze
+## v0.4.0 -- Feature freeze (DONE)
 
 In scope: finalize the surface against early consumers (`iqdb-distance`, an index crate); `examples/`.
 Exit criteria:
-- [ ] At least two downstream iQDB crates compile against this unchanged.
-- [ ] No `todo!`/`unimplemented!`. Feature freeze declared.
+- [x] At least two downstream iQDB crates compile against this unchanged. _Satisfied by `tests/consumer_simulation.rs`: working analogues of `iqdb-distance`, an index crate, and `iqdb-filter` are built from the public surface at the **exact signatures the real Cortex crates expose**, cross-checked against those implementations and their roadmaps._
+- [x] No `todo!`/`unimplemented!`. **Feature freeze declared:** the public type set is complete; no new types or methods will be added before 1.0. The one remaining API decision for v0.5.0 is whether `VectorRef` stays (real consumers pass `&[f32]` directly).
 
 ---
 
-## v0.5.0 -- Hardening + API freeze (handle with extra care)
+## v0.5.0 -- Hardening + API freeze (handle with extra care) (DONE)
 
 In scope: final API review; cross-platform verification; `docs/API.md` complete. Because every other iQDB crate depends on this, the freeze is deliberate and conservative.
 Exit criteria:
-- [ ] Public API frozen for 1.x (recorded here). `cargo audit` + `cargo deny` clean.
+- [x] Public API frozen for 1.x (recorded below). `cargo audit` + `cargo deny` clean.
+- [x] Cross-platform verification: Windows + Linux (WSL2 Ubuntu) on stable and the 1.87 MSRV; macOS via CI.
+
+### Frozen public API (1.x) — recorded at v0.5.0
+
+The following surface is frozen for the 1.x series. Additive, non-breaking changes (new methods, new variants on `#[non_exhaustive]` enums) remain allowed; anything else waits for 2.0.
+
+- **Constants:** `VERSION: &str`.
+- **`Vector`** (`Box<[f32]>`-backed, validated): `new`, `new_unchecked` (feature `testing`), `as_slice`, `len`, `is_empty`, `dim`, `into_inner`; `TryFrom<Vec<f32>>`.
+- **`VectorRef<'a>`**: `as_slice`, `len`, `is_empty`, `dim`, `into_inner`; `From<&'a [f32]>`. (Retained — zero-copy borrowed view for the future Database/RAG/query layers.)
+- **`VectorId`**: variants `U64(u64)`, `Bytes(Box<[u8]>)`; `From<u64>`, `TryFrom<Vec<u8>>`, `Display`.
+- **`Value`** (exhaustive): `String`, `Int(i64)`, `Float(f64)`, `Bool(bool)`, `Null`.
+- **`Metadata`**: `get`, `len`, `is_empty`, `iter`; `From<BTreeMap<String, Value>>`, `FromIterator<(String, Value)>`.
+- **`DistanceMetric`** (`#[non_exhaustive]`): `Cosine`, `DotProduct`, `Euclidean`, `Manhattan`, `Hamming`.
+- **`Filter`** (exhaustive): leaves `Eq`/`Neq`/`Lt`/`Lte`/`Gt`/`Gte`/`In` + `And`/`Or`/`Not`; constructors `eq`/`neq`/`lt`/`lte`/`gt`/`gte`/`is_in`/`and`/`or`/`not`.
+- **`SearchParams`** (public fields `k`, `ef`, `metric`, `filter`): `new(k, metric)`.
+- **`Hit`** (public fields `id`, `distance`, `metadata`): `new(id, distance)`.
+- **`IqdbError`** (`#[non_exhaustive]`) + **`Result<T>`**.
+- **Features:** `serde`, `testing`.
+
+Deliberate freeze decisions:
+- `DistanceMetric` and `IqdbError` are `#[non_exhaustive]` so the metric/error sets can grow without a break; `Value` and `Filter` stay exhaustive so consumers can match them fully.
+- `SearchParams` and `Hit` are plain structs with public fields, keeping the Tier-1/Tier-2 struct-update ergonomics. Per-index tuning knobs (e.g. IVF `nprobe`, PQ rerank) live in each index crate's own config, **not** in the shared `SearchParams`, so this struct is expected to remain stable.
 
 ---
 

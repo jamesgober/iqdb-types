@@ -55,14 +55,14 @@
 
 ```toml
 [dependencies]
-iqdb-types = "0.3"
+iqdb-types = "0.5"
 ```
 
 <br>
 
 ## Status
 
-<code>v0.3.0</code> — the core type surface (landed in v0.2.0) is now hardened: property-tested across every invariant, fully documented with runnable examples and a complete <a href="./docs/API.md"><code>API reference</code></a>, performance-tuned (`Box<[f32]>`-backed `Vector`, inlined accessors, a benchmarked hot path), and `DistanceMetric` made `#[non_exhaustive]` for forward compatibility. The API is being finalized across the remaining 0.x series and frozen at `1.0.0`; see the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>.
+<code>v0.5.0</code> — **API frozen for 1.x.** The public surface is locked (recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>); only additive, non-breaking changes are allowed before 2.0. The surface is property-tested across every invariant, fully documented with runnable examples and a complete <a href="./docs/API.md"><code>API reference</code></a>, performance-tuned (`Box<[f32]>`-backed `Vector`, inlined accessors, a benchmarked hot path), validated by a consumer-simulation suite, and verified on Windows + Linux across stable and the 1.87 MSRV. Remaining before 1.0: alpha/beta/RC polish.
 
 <hr>
 <br>

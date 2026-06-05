@@ -1,11 +1,12 @@
 # iqdb-types &mdash; API Reference
 
-> Complete reference for **every** public item in `iqdb-types` as of **v0.3.0**:
+> Complete reference for **every** public item in `iqdb-types` as of **v0.5.0**:
 > what it is, its parameters and return shape, the traits it implements, and
 > worked examples for each use case.
 >
-> **Status: pre-1.0.** The surface is refined across the 0.x series and frozen
-> at `1.0.0`. `IqdbError` is `#[non_exhaustive]`.
+> **Status: API frozen for 1.x** (as of v0.5.0; the frozen surface is recorded
+> in `dev/ROADMAP.md`). Only additive, non-breaking changes are made before 2.0.
+> `DistanceMetric` and `IqdbError` are `#[non_exhaustive]`.
 
 ## Table of Contents
 

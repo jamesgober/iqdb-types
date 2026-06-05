@@ -10,19 +10,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Consumer-simulation integration suite (`tests/consumer_simulation.rs`) toward
-  the v0.4.0 feature-freeze gate: minimal working analogues of `iqdb-distance`,
-  an index crate, and `iqdb-filter` — built only from the public surface and at
-  the **exact signatures the real crates expose** (`compute(metric, &[f32],
-  &[f32])`; an `Arc<[f32]>`-storing index with `search(&[f32], &SearchParams)`
-  and `delete(&VectorId)`; closed-world `Filter` evaluation). Confirms the
-  vocabulary is sufficient and ergonomic for the family before the freeze.
-
 ### Changed
 
 ### Fixed
 
 ### Security
+
+---
+
+## [0.5.0] - 2026-06-05
+
+API freeze. The public API is locked for the 1.x series — the frozen surface is recorded in `dev/ROADMAP.md`. Additive, non-breaking changes remain allowed; anything else waits for 2.0.
+
+### Changed
+
+- Public API declared frozen for 1.x (recorded in `dev/ROADMAP.md`). Freeze
+  decisions: `VectorRef` retained; `DistanceMetric` and `IqdbError` are
+  `#[non_exhaustive]` for forward compatibility while `Value` and `Filter`
+  remain exhaustive; `SearchParams`/`Hit` stay plain public-field structs, with
+  per-index tuning knobs reserved to the index crates rather than the shared
+  `SearchParams`.
+- Cross-platform verification extended to Linux (WSL2 Ubuntu) on both stable and
+  the 1.87 MSRV, alongside Windows; macOS via CI.
+
+---
+
+## [0.4.0] - 2026-06-05
+
+Feature freeze. The public type set is complete and declared frozen — no new types or methods will be added before 1.0. This release adds the consumer-side proof that the surface is sufficient for the family.
+
+### Added
+
+- Consumer-simulation integration suite (`tests/consumer_simulation.rs`)
+  satisfying the feature-freeze gate: minimal working analogues of
+  `iqdb-distance`, an index crate, and `iqdb-filter` — built only from the
+  public surface and at the **exact signatures the real crates expose**
+  (`compute(metric, &[f32], &[f32])`; an `Arc<[f32]>`-storing index with
+  `search(&[f32], &SearchParams)` and `delete(&VectorId)`; closed-world
+  `Filter` evaluation). Cross-checked against the Cortex implementations and
+  their roadmaps; confirms the vocabulary is sufficient and ergonomic.
+
+### Fixed
+
+- `tests/properties.rs`: bind the expected `Value` to a local before
+  `prop_assert_eq!` so the metadata-lookup property compiles on the 1.87 MSRV
+  (the inline temporary `Some(&Value::Int(..))` was dropped while borrowed —
+  E0716 — under 1.87, though accepted by newer toolchains).
 
 ---
 
@@ -119,7 +152,9 @@ Initial scaffold and repository bootstrap. No domain logic yet &mdash; this rele
 - `.github/workflows/ci.yml` CI matrix; `deny.toml`, `clippy.toml`, `rustfmt.toml`.
 - `dev/DIRECTIVES.md` and `dev/ROADMAP.md` (committed engineering standards + plan).
 
-[Unreleased]: https://github.com/jamesgober/iqdb-types/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/jamesgober/iqdb-types/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/jamesgober/iqdb-types/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/jamesgober/iqdb-types/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/jamesgober/iqdb-types/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/jamesgober/iqdb-types/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/jamesgober/iqdb-types/releases/tag/v0.1.0
