@@ -44,8 +44,26 @@ use crate::error::{IqdbError, Result};
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct Vector(Box<[f32]>);
+
+/// Deserializes through [`Vector::new`], so an empty or non-finite payload
+/// is rejected exactly as at construction. The wire shape is the one the
+/// derived impl used (a newtype named `Vector` around a sequence of `f32`).
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for Vector {
+    fn deserialize<D>(deserializer: D) -> core::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(serde::Deserialize)]
+        #[serde(rename = "Vector")]
+        struct Raw(Vec<f32>);
+
+        let Raw(data) = Raw::deserialize(deserializer)?;
+        Self::new(data).map_err(serde::de::Error::custom)
+    }
+}
 
 impl Vector {
     /// Builds a `Vector` from `data`, validating the contents.

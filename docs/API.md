@@ -88,7 +88,7 @@ pub struct Vector(/* private: Box<[f32]> */);
 
 An **owned**, validated, dense `f32` embedding — the unit of value the spine indexes. Construction validates contents once so the rest of the family can trust every `Vector` it receives. Components are stored in a `Box<[f32]>` (not a `Vec<f32>`): a `Vector` is immutable after construction, so it carries no spare capacity and is one machine word smaller than a `Vec`-backed wrapper.
 
-**Derives / traits:** `Debug`, `Clone`, `PartialEq` (not `Eq` — it holds `f32`); `Serialize`/`Deserialize` under the `serde` feature.
+**Derives / traits:** `Debug`, `Clone`, `PartialEq` (not `Eq` — it holds `f32`); `Serialize`/`Deserialize` under the `serde` feature. Deserializing runs the same checks as `Vector::new`, so an empty or non-finite payload is an error.
 
 #### `Vector::new`
 
@@ -234,7 +234,7 @@ pub enum VectorId {
 
 A stable identifier for a stored vector: either a compact 64-bit integer (a row id, a counter) or an opaque, **non-empty** byte key (a content hash, a UUID's raw bytes). The crate imposes no id scheme — use whichever your data already has.
 
-**Derives / traits:** `Debug`, `Clone`, `PartialEq`, `Eq`, `Hash`; `Display`; `Serialize`/`Deserialize` under `serde`.
+**Derives / traits:** `Debug`, `Clone`, `PartialEq`, `Eq`, `Hash`; `Display`; `Serialize`/`Deserialize` under `serde`. Deserializing a `Bytes` id runs the same check as `try_from`, so an empty key is an error.
 
 #### Construction
 

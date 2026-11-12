@@ -155,3 +155,28 @@ fn serde_round_trips_null_and_empty_metadata() {
     assert_eq!(json, "{}");
     assert_eq!(serde_json::from_str::<Metadata>(&json).unwrap(), empty);
 }
+
+#[cfg(feature = "serde")]
+#[test]
+fn deserializing_a_vector_applies_the_constructor_checks() {
+    let ok: Vector = serde_json::from_str("[1.0,2.0]").unwrap();
+    assert_eq!(ok.as_slice(), &[1.0, 2.0]);
+    // The wire shape is unchanged.
+    assert_eq!(serde_json::to_string(&ok).unwrap(), "[1.0,2.0]");
+
+    assert!(serde_json::from_str::<Vector>("[]").is_err());
+    // JSON has no NaN literal, but a float past f32 overflows to inf.
+    assert!(serde_json::from_str::<Vector>("[1.0,1e39]").is_err());
+}
+
+#[cfg(feature = "serde")]
+#[test]
+fn deserializing_an_empty_byte_key_is_rejected() {
+    let ok: VectorId = serde_json::from_str(r#"{"Bytes":[1,2]}"#).unwrap();
+    assert_eq!(ok, VectorId::try_from(vec![1u8, 2]).unwrap());
+    assert_eq!(serde_json::to_string(&ok).unwrap(), r#"{"Bytes":[1,2]}"#);
+    let n: VectorId = serde_json::from_str(r#"{"U64":7}"#).unwrap();
+    assert_eq!(n, VectorId::U64(7));
+
+    assert!(serde_json::from_str::<VectorId>(r#"{"Bytes":[]}"#).is_err());
+}
