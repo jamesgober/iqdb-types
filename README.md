@@ -62,7 +62,7 @@ iqdb-types = "1.0"
 
 ## Status
 
-<code>v1.0.0</code> — **stable.** The public API is committed under SemVer for the 1.x series (no breaking changes until 2.0; the frozen surface is recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>). It is property-tested across every invariant, fully documented with runnable examples and a complete <a href="./docs/API.md"><code>API reference</code></a>, performance-tuned (`Box<[f32]>`-backed `Vector`, inlined accessors, a benchmarked hot path), validated by a consumer-simulation suite mirroring the real downstream crates, and verified on Windows + Linux across stable and the 1.87 MSRV.
+<code>v1.0.1</code> — **stable.** The public API is committed under SemVer for the 1.x series (no breaking changes until 2.0; the frozen surface is recorded in the <a href="./dev/ROADMAP.md"><code>ROADMAP</code></a>). It is property-tested across every invariant, fully documented with runnable examples and a complete <a href="./docs/API.md"><code>API reference</code></a>, performance-tuned (`Box<[f32]>`-backed `Vector`, inlined accessors, a benchmarked hot path), validated by a consumer-simulation suite mirroring the real downstream crates, and verified on Windows + Linux across stable and the 1.87 MSRV.
 
 <hr>
 <br>

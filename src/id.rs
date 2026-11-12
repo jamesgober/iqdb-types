@@ -30,13 +30,36 @@ use crate::error::IqdbError;
 /// assert!(VectorId::try_from(Vec::new()).is_err());
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub enum VectorId {
     /// A compact 64-bit integer id (for example, a row id).
     U64(u64),
     /// An opaque, non-empty byte key (for example, a content hash or a UUID's
     /// raw bytes).
     Bytes(Box<[u8]>),
+}
+
+/// Deserializes with the same rule as [`VectorId::try_from`]: an empty
+/// `Bytes` key is rejected. The wire shape is the one the derived impl used
+/// (an enum named `VectorId` with `U64` and `Bytes` variants).
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for VectorId {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(serde::Deserialize)]
+        #[serde(rename = "VectorId")]
+        enum Raw {
+            U64(u64),
+            Bytes(Box<[u8]>),
+        }
+
+        match Raw::deserialize(deserializer)? {
+            Raw::U64(n) => Ok(Self::U64(n)),
+            Raw::Bytes(b) => Self::try_from(b.into_vec()).map_err(serde::de::Error::custom),
+        }
+    }
 }
 
 impl From<u64> for VectorId {

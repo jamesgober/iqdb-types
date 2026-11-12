@@ -8,13 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Added
-
-### Changed
-
-### Fixed
+Planned as 1.0.1. No API changes.
 
 ### Security
+
+- With the `serde` feature, deserializing a `Vector` or a `VectorId`
+  skipped the checks their constructors make, so a payload could carry an
+  empty vector, a non-finite component, or an empty byte key into code that
+  trusts these types. `Vector` now deserializes through `Vector::new` and
+  `VectorId::Bytes` through `VectorId::try_from`. The wire format is
+  unchanged.
 
 ---
 
