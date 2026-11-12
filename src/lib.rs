@@ -1,6 +1,6 @@
 //! # iqdb-types
 //!
-//! Shared, dependency-light public types for the HiveDB **iqdb** vector-database
+//! Shared, dependency-light public types for the **iqdb** vector-database
 //! spine. This crate is pure data: the vectors that get indexed, the ids that
 //! name them, the metadata attached to them, the metrics that compare them, the
 //! parameters and filters of a search, the hits it returns, and the one domain
